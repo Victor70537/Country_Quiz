@@ -25,7 +25,7 @@ public class CountryDBHelper extends SQLiteOpenHelper {
 
     // Define your table creation SQL statements
 
-    public CountryDBHelper (AccessControlContext context) {
+    public CountryDBHelper (Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
