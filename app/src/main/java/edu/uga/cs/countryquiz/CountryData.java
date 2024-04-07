@@ -50,7 +50,7 @@ public class CountryData {
     // Retrieve all countries and return them as a List.
     // This is how we restore persistent objects stored as rows in the country table in the database.
     // For each retrieved row, we create a new Country (Java POJO object) instance and add it to the list.
-    public List<Country> retrieveAllJobLeads() {
+    public List<Country> retrieveAllCountries() {
 
         // create the new country arraylist
         ArrayList<Country> countries = new ArrayList<>();
