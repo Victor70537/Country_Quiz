@@ -8,11 +8,44 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.*;
 
 public class QuizFragment extends Fragment {
 
+    private static final String[] countries = {
+            "Egypt",
+            "Laos",
+            "Venezuela",
+            "Kenya",
+            "Cuba",
+            "Congo",
+    };
+
+    private static final String[] countriesContinents = {
+            "Africa",
+            "Asia",
+            "South America",
+            "Africa",
+            "North America",
+            "Africa"
+    };
+
+    private static final String[] continents = {
+        "Africa",
+        "Asia",
+        "Europe",
+        "North America",
+        "Oceania",
+        "South America"
+    };
+
     private int country;
+
     public QuizFragment() {
         // Required empty public constructor
     }
@@ -40,17 +73,22 @@ public class QuizFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_quiz, container, false);
     }
 
-
-    // hELLLooo
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
-        //public void onActivityCreated(Bundle savedInstanceState) {
         super.onViewCreated( view, savedInstanceState );
 
-        TextView titleView = view.findViewById( R.id.titleView );
-        TextView highlightsView = view.findViewById( R.id.highlightsView );
+        TextView question = view.findViewById(R.id.question);
+        question.setText("Question " + (country + 1) + ": Name the continent on which " + countries[country] + " is located.");
 
-        titleView.setText( androidVersions[ versionNum ] );
-        highlightsView.setText( androidVersionsInfo[ versionNum ] );
+        RadioButton option1 = view.findViewById(R.id.option1);
+        RadioButton option2 = view.findViewById(R.id.option2);
+        RadioButton option3 = view.findViewById(R.id.option3);
+
+        Random random = new Random();
+
+
+        option1.setText(continents[random.nextInt(continents.length)]);
+        option2.setText(countriesContinents[country]);
+        option3.setText(continents[random.nextInt(continents.length)]);
     }
 
     public static int getNumberOfVersions() {
