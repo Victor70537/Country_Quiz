@@ -22,23 +22,6 @@ import java.util.*;
 
 public class QuizFragment extends Fragment {
 
-//    private static final String[] countries = {
-//            "Egypt",
-//            "Laos",
-//            "Venezuela",
-//            "Kenya",
-//            "Cuba",
-//            "Congo",
-//    };
-
-//    private static final String[] countriesContinents = {
-//            "Africa",
-//            "Asia",
-//            "South America",
-//            "Africa",
-//            "North America",
-//            "Africa"
-//    };
 
     private static final String[] continents = {
         "Africa",
@@ -54,7 +37,16 @@ public class QuizFragment extends Fragment {
     private CountryData countryData;
     private ResultsData resultsData = null;
 
-    private static int pageCount;
+    private List<Country> countriesList = new ArrayList<>();
+
+//    private static int pageCount;
+
+    private TextView question;
+    private RadioButton option1, option2, option3;
+    private RadioGroup radioGroup;
+    private Button button;
+
+    private int correct_choice;
     String dateString;
     int total;
 
@@ -66,7 +58,7 @@ public class QuizFragment extends Fragment {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
         args.putInt("Country", country);
-        pageCount = country + 1;
+//        pageCount = country+1;
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,102 +84,128 @@ public class QuizFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
-        super.onViewCreated( view, savedInstanceState );
+        super.onViewCreated(view, savedInstanceState);
 
-        TextView question = view.findViewById(R.id.results);
+        question = view.findViewById(R.id.results);
         // creates the radio buttons and group them into a radio group
-        RadioButton option1 = view.findViewById(R.id.option1);
-        RadioButton option2 = view.findViewById(R.id.option2);
-        RadioButton option3 = view.findViewById(R.id.option3);
-        Button button = view.findViewById(R.id.button4);
 
-        button.setOnClickListener(new SaveButtonClickListener()) ;
+        button = view.findViewById(R.id.button4);
+        option1 = view.findViewById(R.id.option1);
+        option2 = view.findViewById(R.id.option2);
+        option3 = view.findViewById(R.id.option3);
 
-        if (pageCount < 7) {
-            button.setVisibility(View.INVISIBLE);
+        radioGroup = view.findViewById(R.id.options);
 
-            RadioGroup radioGroup = view.findViewById(R.id.options);
-
-
-        // retrieve all the different countries
-            List<Country> countriesList = countryData.retrieveAllCountries();
-
-            Log.d("Quiz Fragment", "" + countriesList.size());
-
-        // generate the random countries
-            Random random = new Random();
-            Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
-
-            question.setText("Question " + pageCount + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
-
-//        option1.setText(continents[random.nextInt(continents.length)]);
-//        option2.setText(countriesContinents[country]);
-//        option3.setText(continents[random.nextInt(continents.length)]);
+        button.setOnClickListener(new SaveButtonClickListener());
+        new CountryDBReader().execute();
+    }
 
 
-        // randomly generates the answer choices and make sure there's no repeated answer choices
-        List<String> choices = new ArrayList<>();
 
-        while (choices.size() < 3) {
+    // This is an AsyncTask class (it extends AsyncTask) to perform DB reading of job leads, asynchronously.
+    private class CountryDBReader extends AsyncTask<Void, List<Country>> {
+        // This method will run as a background process to read from db.
+        // It returns a list of retrieved JobLead objects.
+        // It will be automatically invoked by Android, when we call the execute method
+        // in the onCreate callback (the job leads review activity is started).
+        @Override
+        protected List<Country> doInBackground(Void... params) {
+            countriesList = countryData.retrieveAllCountries();
 
-            int i = random.nextInt(6);
+            Log.d("CountryDBReader", "CountryDBReader: Countries retrieved: " + countriesList.size());
 
-            if (!choices.contains(continents[i])) {
-                choices.add(continents[i]);
-            }
+            return countriesList;
         }
 
-        Log.d("Quiz Fragment", "Random Answer Choices" + choices);
+        @Override
+        protected void onPostExecute(List<Country> countriesList) {
 
-        // add the correct answer choice if it's not already generated
-        int correct_choice = random.nextInt(3);
-        if (!choices.contains(randomCountry.getContinent())) {
-            choices.set(correct_choice, randomCountry.getContinent());
+            if (((QuizActivity) getActivity()).getPosition() < 6) {
+                button.setVisibility(View.INVISIBLE);
+                Log.d("Quiz Fragment", "Size of countriesList after CountryDBReader().execute(): " + countriesList.size());
 
-        }
+                // generate the random countries
+                Random random = new Random();
+                Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
 
-            option1.setText(choices.get(0));
-            option2.setText(choices.get(1));
-            option3.setText(choices.get(2));
+                int j = ((QuizActivity) getActivity()).getPosition() + 1;
 
-            // listens to the radio buttons and check if the user has selected the correct answer choice
-            // if answered correctly, increment grade in the parent activity with updateTotalGrade()
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    RadioButton checkedRadioButton = view.findViewById(checkedId);
+                question.setText("Question " + j + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
 
-                    String correct_choice_string = choices.get(correct_choice);
 
-                    Log.d("Quiz Fragment", "Correct answer: " + correct_choice_string);
+                // randomly generates the answer choices and make sure there's no repeated answer choices
+                List<String> choices = new ArrayList<>();
 
-                    if (checkedRadioButton != null && checkedRadioButton.getText().toString().equals(choices.get(correct_choice))) {
+                while (choices.size() < 3) {
 
-                        Log.d("Quiz Fragment", "You picked the correct choice");
+                    int i = random.nextInt(6);
 
-                        ((QuizActivity)getActivity()).updateTotalGrade();
-
-                    } else {
-                        // do nothing if its wrong
+                    if (!choices.contains(continents[i])) {
+                        choices.add(continents[i]);
                     }
                 }
-            });
-        } else {
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            Date date = new Date();
-            dateString = dateFormat.format(date);
 
-            total = ((QuizActivity)getActivity()).getTotalGrade();
-            question.setText("Date: " + dateString + "\n\nResults: " + total + "/6");
+//                Log.d("Quiz Fragment", "Random Answer Choices" + choices);
 
-            option1.setVisibility(View.INVISIBLE);
-            option2.setVisibility(View.INVISIBLE);
-            option3.setVisibility(View.INVISIBLE);
+                // add the correct answer choice if it's not already generated
+                correct_choice = random.nextInt(3);
+                if (!choices.contains(randomCountry.getContinent())) {
+                    choices.set(correct_choice, randomCountry.getContinent());
+                } else {
+                    if (choices.get(0).equals(randomCountry.getContinent())) {
+                        correct_choice = 0;
+                    } else if (choices.get(1).equals(randomCountry.getContinent())) {
+                        correct_choice = 1;
+                    } else if (choices.get(2).equals(randomCountry.getContinent())) {
+                        correct_choice = 2;
+                    }
+                }
 
-            resultsData = new ResultsData( getActivity() );
+                Log.d("Quiz Fragment", "Correct answer for " + randomCountry.getCountry() + ": " + randomCountry.getContinent());
+
+                option1.setText(choices.get(0));
+                option2.setText(choices.get(1));
+                option3.setText(choices.get(2));
+
+                // listens to the radio buttons and check if the user has selected the correct answer choice
+                // if answered correctly, increment grade in the parent activity with updateTotalGrade()
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        RadioButton checkedRadioButton = getView().findViewById(checkedId);
+
+//                        String correct_choice_string = choices.get(correct_choice);
+
+                        Log.d("CheckedRadioButton", checkedRadioButton.getText().toString());
+
+                        if (checkedRadioButton != null && checkedRadioButton.getText().toString().equals(choices.get(correct_choice))) {
+
+                            Log.d("Quiz Fragment", "You picked the correct choice");
+
+                            ((QuizActivity) getActivity()).updateTotalGrade();
+
+                        } else {
+                            // do nothing if its wrong
+                        }
+                    }
+                });
+            } else {
+                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                Date date = new Date();
+                dateString = dateFormat.format(date);
+
+                total = ((QuizActivity) getActivity()).getTotalGrade();
+                question.setText("Date: " + dateString + "\n\nResults: " + total + "/6");
+
+                option1.setVisibility(View.INVISIBLE);
+                option2.setVisibility(View.INVISIBLE);
+                option3.setVisibility(View.INVISIBLE);
+
+                resultsData = new ResultsData(getActivity());
 //            resultsData.open();
 //            Results results = new Results(dateFormat.format(date), total);
 //            new ResultsDBWriter().execute(results);
+            }
         }
     }
 
