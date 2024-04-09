@@ -94,19 +94,17 @@ public class QuizFragment extends Fragment {
 
 
         if (pageCount < 7) {
-            // retrieve all the different countries
-            List<Country> countriesList = countryData.retrieveAllCountries();
-        RadioGroup radioGroup = view.findViewById(R.id.options);
+            RadioGroup radioGroup = view.findViewById(R.id.options);
 
 
         // retrieve all the different countries
-        List<Country> countriesList = countryData.retrieveAllCountries();
+            List<Country> countriesList = countryData.retrieveAllCountries();
 
             Log.d("Quiz Fragment", "" + countriesList.size());
 
         // generate the random countries
-        Random random = new Random();
-        Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
+            Random random = new Random();
+            Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
 
             question.setText("Question " + pageCount + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
 
@@ -139,37 +137,38 @@ public class QuizFragment extends Fragment {
             option1.setText(choices.get(0));
             option2.setText(choices.get(1));
             option3.setText(choices.get(2));
+
+            // listens to the radio buttons and check if the user has selected the correct answer choice
+            // if answered correctly, increment grade in the parent activity with updateTotalGrade()
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    RadioButton checkedRadioButton = view.findViewById(checkedId);
+
+                    String correct_choice_string = choices.get(correct_choice);
+
+                    Log.d("Quiz Fragment", "Correct answer: " + correct_choice_string);
+
+                    if (checkedRadioButton != null && checkedRadioButton.getText().toString().equals(choices.get(correct_choice))) {
+
+                        Log.d("Quiz Fragment", "You picked the correct choice");
+
+                        ((QuizActivity)getActivity()).updateTotalGrade();
+
+                    } else {
+                        // do nothing if its wrong
+                    }
+                }
+            });
         } else {
             question.setText("End");
             option1.setVisibility(View.INVISIBLE);
             option2.setVisibility(View.INVISIBLE);
             option3.setVisibility(View.INVISIBLE);
-
-        // listens to the radio buttons and check if the user has selected the correct answer choice
-        // if answered correctly, increment grade in the parent activity with updateTotalGrade()
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = view.findViewById(checkedId);
-
-                String correct_choice_string = choices.get(correct_choice);
-
-                Log.d("Quiz Fragment", "Correct answer: " + correct_choice_string);
-
-                if (checkedRadioButton != null && checkedRadioButton.getText().toString().equals(choices.get(correct_choice))) {
-
-                    Log.d("Quiz Fragment", "You picked the correct choice");
-
-                    ((QuizActivity)getActivity()).updateTotalGrade();
-
-                } else {
-                    // do nothing if its wrong
-                }
-            }
-        });
+        }
     }
 
     public static int getNumberOfVersions() {
-        return 6;
+        return 7;
     }
 }
