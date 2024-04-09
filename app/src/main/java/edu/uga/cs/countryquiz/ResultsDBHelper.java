@@ -16,6 +16,7 @@ public class ResultsDBHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_RESULTS = "results";
     public static final String COLUMN_ID = "ID";
+    public static final String COLUMN_DATE = "Date";
     public static final String COLUMN_GRADE = "Grade";
 
     private static ResultsDBHelper helperInstance;
@@ -23,7 +24,8 @@ public class ResultsDBHelper extends SQLiteOpenHelper {
     // Define your table creation SQL statements
     private static final String CREATE_RESULTS =
             "create table " + TABLE_RESULTS + " ("
-                    + COLUMN_ID + " INTEGER PRIMARY KEY, "
+                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + COLUMN_DATE + " TEXT,"
                     + COLUMN_GRADE + " INTEGER "
                     + ")";
 

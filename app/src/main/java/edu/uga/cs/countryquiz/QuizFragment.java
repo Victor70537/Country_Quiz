@@ -3,16 +3,21 @@ package edu.uga.cs.countryquiz;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class QuizFragment extends Fragment {
@@ -47,8 +52,11 @@ public class QuizFragment extends Fragment {
     private int country;
 
     private CountryData countryData;
+    private ResultsData resultsData = null;
 
     private static int pageCount;
+    String dateString;
+    int total;
 
     public QuizFragment() {
         // Required empty public constructor
@@ -91,9 +99,13 @@ public class QuizFragment extends Fragment {
         RadioButton option1 = view.findViewById(R.id.option1);
         RadioButton option2 = view.findViewById(R.id.option2);
         RadioButton option3 = view.findViewById(R.id.option3);
+        Button button = view.findViewById(R.id.button4);
 
+        button.setOnClickListener(new SaveButtonClickListener()) ;
 
         if (pageCount < 7) {
+            button.setVisibility(View.INVISIBLE);
+
             RadioGroup radioGroup = view.findViewById(R.id.options);
 
 
@@ -161,11 +173,79 @@ public class QuizFragment extends Fragment {
                 }
             });
         } else {
-            question.setText("End");
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date date = new Date();
+            dateString = dateFormat.format(date);
+
+            total = ((QuizActivity)getActivity()).getTotalGrade();
+            question.setText("Date: " + dateString + "\n\nResults: " + total + "/6");
+
             option1.setVisibility(View.INVISIBLE);
             option2.setVisibility(View.INVISIBLE);
             option3.setVisibility(View.INVISIBLE);
+
+            resultsData = new ResultsData( getActivity() );
+//            resultsData.open();
+//            Results results = new Results(dateFormat.format(date), total);
+//            new ResultsDBWriter().execute(results);
         }
+    }
+
+    private class SaveButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick( View v ) {
+            Results results = new Results(dateString, total);
+
+            // Store this new job lead in the database asynchronously,
+            // without blocking the UI thread.
+            new ResultsDBWriter().execute( results );
+        }
+    }
+
+    public class ResultsDBWriter extends AsyncTask<Results, Results> {
+
+        // This method will run as a background process to write into db.
+        // It will be automatically invoked by Android, when we call the execute method
+        // in the onClick listener of the Save button.
+        @Override
+        protected Results doInBackground(Results... results) {
+            resultsData.storeResult(results[0]);
+            return results[0];
+        }
+
+        // This method will be automatically called by Android once the writing to the database
+        // in a background process has finished.  Note that doInBackground returns a JobLead object.
+        // That object will be passed as argument to onPostExecute.
+        // onPostExecute is like the notify method in an asynchronous method call discussed in class.
+        @Override
+        protected void onPostExecute(Results results) {
+            // Show a quick confirmation message
+            Toast.makeText(getActivity(), "Results created with grade of " + results.getGrade(),
+                    Toast.LENGTH_SHORT).show();
+
+            // Clear the EditTexts for next use.
+
+            Log.d("Adding Results", "Results saved: " + results);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // open the database in onResume
+        if( resultsData != null )
+            resultsData.open();
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle( getResources().getString( R.string.app_name ) );
+    }
+
+    // We need to save job leads into a file as the activity stops being a foreground activity
+    @Override
+    public void onPause() {
+        Log.d( "Adding Results", "AddJobLeadFragment.onPause()" );
+        super.onPause();
+        // close the database in onPause
+        if( resultsData != null )
+            resultsData.close();
     }
 
     public static int getNumberOfVersions() {

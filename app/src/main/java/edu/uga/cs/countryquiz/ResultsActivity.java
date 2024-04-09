@@ -16,14 +16,5 @@ public class ResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
-
-//        TextView results = findViewById(R.id.textView);
-//
-//        resultsData = new ResultsData( getActivity().getApplication() );
-//        resultsData.open();
-//
-//        List<Results> resultsList = resultsData.retrieveAllResults();
-
-
     }
 }
