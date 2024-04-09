@@ -33,6 +33,14 @@ public class ResultsDBHelper extends SQLiteOpenHelper {
         this.context = context.getApplicationContext();
     }
 
+    public static synchronized ResultsDBHelper getInstance( Context context ) {
+        // check if the instance already exists and if not, create the instance
+        if( helperInstance == null ) {
+            helperInstance = new ResultsDBHelper ( context.getApplicationContext() );
+        }
+        return helperInstance;
+    }
+
     @Override
     public void onCreate( SQLiteDatabase db ) {
         db.execSQL( CREATE_RESULTS );

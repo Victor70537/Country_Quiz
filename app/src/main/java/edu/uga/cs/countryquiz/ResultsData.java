@@ -9,34 +9,33 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CountryData {
+public class ResultsData {
 
-    private static final String DEBUG_TAG = "CountryData";
+    private static final String DEBUG_TAG = "ResultsData";
 
     private SQLiteDatabase db;
 
-    private static SQLiteOpenHelper countryDBHelper;
+    private static SQLiteOpenHelper resultsDBHelper;
 
     private static final String[] allColumns = {
-        CountryDBHelper.COLUMN_ID,
-        CountryDBHelper.COLUMN_COUNTRY,
-        CountryDBHelper.COLUMN_CONTINENT
+            ResultsDBHelper.COLUMN_ID,
+            ResultsDBHelper.COLUMN_GRADE,
     };
 
-    public CountryData ( Context context ) {
-        this.countryDBHelper = CountryDBHelper.getInstance( context );
+    public ResultsData ( Context context ) {
+        this.resultsDBHelper = ResultsDBHelper.getInstance( context );
     }
 
     // Open the database
     public void open() {
-        db = countryDBHelper.getWritableDatabase();
+        db = resultsDBHelper.getWritableDatabase();
         Log.d( DEBUG_TAG, "JobLeadsData: db open" );
     }
 
     // Close the database
     public void close() {
-        if( countryDBHelper != null ) {
-            countryDBHelper.close();
+        if( resultsDBHelper != null ) {
+            resultsDBHelper.close();
             Log.d(DEBUG_TAG, "JobLeadsData: db closed");
         }
     }
@@ -46,19 +45,19 @@ public class CountryData {
         return db.isOpen();
     }
 
-    // Retrieve all countries and return them as a List.
+    // Retrieve all results and return them as a List.
     // This is how we restore persistent objects stored as rows in the country table in the database.
     // For each retrieved row, we create a new Country (Java POJO object) instance and add it to the list.
-    public List<Country> retrieveAllCountries() {
+    public List<Results> retrieveAllResults() {
 
         // create the new country arraylist
-        ArrayList<Country> countries = new ArrayList<>();
+        ArrayList<Results> results_list = new ArrayList<>();
         Cursor cursor = null;
         int columnIndex;
 
         try {
             // Execute the select query and get the Cursor to iterate over the retrieved rows
-            cursor = db.query( CountryDBHelper.TABLE_COUNTRY_CONTINENT, allColumns,
+            cursor = db.query( ResultsDBHelper.TABLE_RESULTS, allColumns,
                     null, null, null, null, null );
 
 
@@ -69,22 +68,20 @@ public class CountryData {
 
                 while( cursor.moveToNext() ) {
 
-                    if( cursor.getColumnCount() >= 3) {
+                    if( cursor.getColumnCount() >= 2) {
 
                         // get all attribute values of this job lead
-                        columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_ID );
+                        columnIndex = cursor.getColumnIndex( ResultsDBHelper.COLUMN_ID );
                         int id = cursor.getInt( columnIndex );
-                        columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_COUNTRY );
-                        String country_string = cursor.getString( columnIndex );
-                        columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_CONTINENT );
-                        String continent = cursor.getString( columnIndex );
+                        columnIndex = cursor.getColumnIndex( ResultsDBHelper.COLUMN_GRADE);
+                        int grade = cursor.getInt( columnIndex );
 
                         // create a new JobLead object and set its state to the retrieved values
-                        Country country = new Country( country_string, continent );
-                        country.setId(id); // set the id (the primary key) of this object
+                        Results results = new Results( grade );
+                        results.setId(id); // set the id (the primary key) of this object
                         // add it to the list
-                        countries.add( country );
-                        Log.d(DEBUG_TAG, "Retrieved country: " + country);
+                        results_list.add( results );
+                        Log.d(DEBUG_TAG, "Retrieved results: " + results);
                     }
                 }
             }
@@ -105,8 +102,6 @@ public class CountryData {
             }
         }
         // return a list of retrieved job leads
-        return countries;
+        return results_list;
     }
-
-
 }
