@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 public class QuizActivity extends AppCompatActivity {
 
+    public int pageCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,5 +17,7 @@ public class QuizActivity extends AppCompatActivity {
         QuizPagerAdapter qpAdapter = new QuizPagerAdapter(getSupportFragmentManager(), getLifecycle());
         pager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         pager.setAdapter(qpAdapter);
+
+
     }
 }

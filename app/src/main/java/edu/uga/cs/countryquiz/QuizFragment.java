@@ -12,8 +12,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.util.Log;
 
-import org.w3c.dom.Text;
-
 import java.util.*;
 
 public class QuizFragment extends Fragment {
@@ -45,9 +43,10 @@ public class QuizFragment extends Fragment {
         "South America"
     };
 
-    private int country;
 
     private CountryData countryData;
+
+    private static int pageCount;
 
     public QuizFragment() {
         // Required empty public constructor
@@ -57,6 +56,7 @@ public class QuizFragment extends Fragment {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
         args.putInt("Country", country);
+        pageCount = country + 1;
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,52 +84,60 @@ public class QuizFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated( view, savedInstanceState );
 
+        TextView question = view.findViewById(R.id.results);
         RadioButton option1 = view.findViewById(R.id.option1);
         RadioButton option2 = view.findViewById(R.id.option2);
         RadioButton option3 = view.findViewById(R.id.option3);
 
-        // retrieve all the different countries
-        List<Country> countriesList = countryData.retrieveAllCountries();
 
-        Log.d("Quiz Fragment", "" + countriesList.size());
+        if (pageCount < 7) {
+            // retrieve all the different countries
+            List<Country> countriesList = countryData.retrieveAllCountries();
 
-        // generate the random countries
-        Random random = new Random();
+            Log.d("Quiz Fragment", "" + countriesList.size());
+
+            // generate the random countries
+            Random random = new Random();
 //        int randomIndex = random.nextInt(countriesList.size());
-        Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
+            Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
 
-        TextView question = view.findViewById(R.id.question);
-        question.setText("Question " + (country + 1) + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
+            question.setText("Question " + pageCount + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
 
 //        option1.setText(continents[random.nextInt(continents.length)]);
 //        option2.setText(countriesContinents[country]);
 //        option3.setText(continents[random.nextInt(continents.length)]);
 
-        List<String> choices = new ArrayList<>();
+            List<String> choices = new ArrayList<>();
 
-        while (choices.size() < 3) {
+            while (choices.size() < 3) {
 
-            int i = random.nextInt(6);
+                int i = random.nextInt(6);
 
-            if (!choices.contains(continents[i])) {
-                choices.add(continents[i]);
+                if (!choices.contains(continents[i])) {
+                    choices.add(continents[i]);
+                }
             }
+
+            Log.d("Random Answer Choices", choices.toString());
+
+            if (!choices.contains(randomCountry.getContinent())) {
+                choices.set(random.nextInt(3), randomCountry.getContinent());
+            }
+
+            option1.setText(choices.get(0));
+            option2.setText(choices.get(1));
+            option3.setText(choices.get(2));
+        } else {
+            question.setText("End");
+            option1.setVisibility(View.INVISIBLE);
+            option2.setVisibility(View.INVISIBLE);
+            option3.setVisibility(View.INVISIBLE);
+
+
         }
-
-        Log.d("Random Answer Choices", choices.toString());
-
-        if (!choices.contains(randomCountry.getContinent())) {
-            choices.set(random.nextInt(3), randomCountry.getContinent());
-        }
-
-        option1.setText(choices.get(0));
-        option2.setText(choices.get(1));
-        option3.setText(choices.get(2));
-
-
     }
 
     public static int getNumberOfVersions() {
-        return countries.length;
+        return countries.length + 1;
     }
 }

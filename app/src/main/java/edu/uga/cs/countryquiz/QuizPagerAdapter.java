@@ -12,11 +12,13 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public Fragment createFragment(int position) {
+
         return QuizFragment.newInstance(position);
     }
 
     @Override
     public int getItemCount() {
+
         return QuizFragment.getNumberOfVersions();
     }
 
