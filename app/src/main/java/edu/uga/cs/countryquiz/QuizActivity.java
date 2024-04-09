@@ -26,4 +26,8 @@ public class QuizActivity extends AppCompatActivity {
 
         Log.d("Quiz Activity", "Total Grade: " + totalGrade);
     }
+
+    public int getTotalGrade() {
+        return totalGrade;
+    }
 }
