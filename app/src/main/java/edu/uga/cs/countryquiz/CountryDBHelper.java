@@ -85,8 +85,11 @@ public class CountryDBHelper extends SQLiteOpenHelper {
             // Assuming the first row contains column headers
             reader.readLine(); // Skip the first line
             while ((line = reader.readLine()) != null) {
+
+                Log.d(DEBUG_TAG, line);
+
                 String[] parts = line.split(","); // Split CSV row by comma
-                // Insert data into database
+
                 db.execSQL("INSERT INTO " + TABLE_COUNTRY_CONTINENT + " (ID, Country, Continent) " + " VALUES (?, ?, ?)", parts);
             }
         } catch (IOException e) {

@@ -62,12 +62,15 @@ public class CountryData {
             cursor = db.query( CountryDBHelper.TABLE_COUNTRY_CONTINENT, allColumns,
                     null, null, null, null, null );
 
+
+            Log.d(DEBUG_TAG, ""+ cursor.getCount());
+
             // collect all job leads into a List
             if( cursor != null && cursor.getCount() > 0 ) {
 
                 while( cursor.moveToNext() ) {
 
-                    if( cursor.getColumnCount() >= 5) {
+                    if( cursor.getColumnCount() >= 3) {
 
                         // get all attribute values of this job lead
                         columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_ID );
@@ -86,6 +89,8 @@ public class CountryData {
                     }
                 }
             }
+
+
             if( cursor != null )
                 Log.d( DEBUG_TAG, "Number of records from DB: " + cursor.getCount() );
             else

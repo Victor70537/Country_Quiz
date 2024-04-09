@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.util.Log;
 
 import org.w3c.dom.Text;
 
@@ -46,6 +47,8 @@ public class QuizFragment extends Fragment {
 
     private int country;
 
+    private CountryData countryData;
+
     public QuizFragment() {
         // Required empty public constructor
     }
@@ -61,9 +64,14 @@ public class QuizFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            country = getArguments().getInt("Country");
-        }
+//        if (getArguments() != null) {
+//            country = getArguments().getInt("Country");
+//        }
+
+        // initialize the countryData variable
+        countryData = new CountryData( getActivity().getApplication() );
+        countryData.open();
+
     }
 
     @Override
@@ -76,19 +84,49 @@ public class QuizFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated( view, savedInstanceState );
 
-        TextView question = view.findViewById(R.id.question);
-        question.setText("Question " + (country + 1) + ": Name the continent on which " + countries[country] + " is located.");
-
         RadioButton option1 = view.findViewById(R.id.option1);
         RadioButton option2 = view.findViewById(R.id.option2);
         RadioButton option3 = view.findViewById(R.id.option3);
 
+        // retrieve all the different countries
+        List<Country> countriesList = countryData.retrieveAllCountries();
+
+        Log.d("Quiz Fragment", "" + countriesList.size());
+
+        // generate the random countries
         Random random = new Random();
+//        int randomIndex = random.nextInt(countriesList.size());
+        Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
+
+        TextView question = view.findViewById(R.id.question);
+        question.setText("Question " + (country + 1) + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
+
+//        option1.setText(continents[random.nextInt(continents.length)]);
+//        option2.setText(countriesContinents[country]);
+//        option3.setText(continents[random.nextInt(continents.length)]);
+
+        List<String> choices = new ArrayList<>();
+
+        while (choices.size() < 3) {
+
+            int i = random.nextInt(6);
+
+            if (!choices.contains(continents[i])) {
+                choices.add(continents[i]);
+            }
+        }
+
+        Log.d("Random Answer Choices", choices.toString());
+
+        if (!choices.contains(randomCountry.getContinent())) {
+            choices.set(random.nextInt(3), randomCountry.getContinent());
+        }
+
+        option1.setText(choices.get(0));
+        option2.setText(choices.get(1));
+        option3.setText(choices.get(2));
 
 
-        option1.setText(continents[random.nextInt(continents.length)]);
-        option2.setText(countriesContinents[country]);
-        option3.setText(continents[random.nextInt(continents.length)]);
     }
 
     public static int getNumberOfVersions() {
