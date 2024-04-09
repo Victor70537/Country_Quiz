@@ -1,5 +1,7 @@
 package edu.uga.cs.countryquiz;
 
+import android.util.Log;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -12,6 +14,8 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public Fragment createFragment(int position) {
+
+        Log.d("QuizPagerAdapter", "Position: " + position);
 
         return QuizFragment.newInstance(position);
     }

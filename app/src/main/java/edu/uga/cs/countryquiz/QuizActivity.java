@@ -9,13 +9,14 @@ import android.util.Log;
 public class QuizActivity extends AppCompatActivity {
 
     private int totalGrade = 0;
+    ViewPager2 pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        ViewPager2 pager = findViewById( R.id.viewpager );
+        pager = findViewById( R.id.viewpager );
         QuizPagerAdapter qpAdapter = new QuizPagerAdapter(getSupportFragmentManager(), getLifecycle());
         pager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         pager.setAdapter(qpAdapter);
@@ -30,4 +31,9 @@ public class QuizActivity extends AppCompatActivity {
     public int getTotalGrade() {
         return totalGrade;
     }
+
+    public int getPosition() {
+        return pager.getCurrentItem();
+    }
+
 }
