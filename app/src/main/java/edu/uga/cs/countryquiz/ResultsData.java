@@ -31,14 +31,14 @@ public class ResultsData {
     // Open the database
     public void open() {
         db = resultsDBHelper.getWritableDatabase();
-        Log.d( DEBUG_TAG, "JobLeadsData: db open" );
+        Log.d( DEBUG_TAG, "resultsData: db open" );
     }
 
     // Close the database
     public void close() {
         if( resultsDBHelper != null ) {
             resultsDBHelper.close();
-            Log.d(DEBUG_TAG, "JobLeadsData: db closed");
+            Log.d(DEBUG_TAG, "resultsData: db closed");
         }
     }
 

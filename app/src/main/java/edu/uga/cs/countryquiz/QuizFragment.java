@@ -32,11 +32,10 @@ public class QuizFragment extends Fragment {
         "South America"
     };
 
-    private int country;
+//    private int country;
 
     private CountryData countryData;
     private ResultsData resultsData = null;
-
     private List<Country> countriesList = new ArrayList<>();
 
 //    private static int pageCount;
@@ -66,9 +65,9 @@ public class QuizFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            country = getArguments().getInt("Country");
-        }
+//        if (getArguments() != null) {
+//            country = getArguments().getInt("Country");
+//        }
 
         // initialize the countryData variable
         countryData = new CountryData( getActivity().getApplication() );
@@ -86,32 +85,37 @@ public class QuizFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated(view, savedInstanceState);
 
+        // get the questions
         question = view.findViewById(R.id.results);
-        // creates the radio buttons and group them into a radio group
 
-        button = view.findViewById(R.id.button4);
+        // creates the radio buttons and group them into a radio group
         option1 = view.findViewById(R.id.option1);
         option2 = view.findViewById(R.id.option2);
         option3 = view.findViewById(R.id.option3);
 
         radioGroup = view.findViewById(R.id.options);
 
+        // creates the buttons for going back home
+        button = view.findViewById(R.id.button4);
         button.setOnClickListener(new SaveButtonClickListener());
+
+        // executes reading database asynchronously
         new CountryDBReader().execute();
     }
 
 
 
-    // This is an AsyncTask class (it extends AsyncTask) to perform DB reading of job leads, asynchronously.
+    // This is an AsyncTask class (it extends AsyncTask) to perform DB reading of countries asynchronously.
     private class CountryDBReader extends AsyncTask<Void, List<Country>> {
         // This method will run as a background process to read from db.
-        // It returns a list of retrieved JobLead objects.
+        // It returns a list of retrieved Country objects.
         // It will be automatically invoked by Android, when we call the execute method
-        // in the onCreate callback (the job leads review activity is started).
+        // in the onCreate callback (the quiz activity is started).
         @Override
         protected List<Country> doInBackground(Void... params) {
             countriesList = countryData.retrieveAllCountries();
 
+            // prints out all the retrieved countries
             Log.d("CountryDBReader", "CountryDBReader: Countries retrieved: " + countriesList.size());
 
             return countriesList;
@@ -120,14 +124,20 @@ public class QuizFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Country> countriesList) {
 
+            // this is to check if we should show the quiz or the results
             if (((QuizActivity) getActivity()).getPosition() < 6) {
+
+                // sets button to invisible until necessary
                 button.setVisibility(View.INVISIBLE);
-                Log.d("Quiz Fragment", "Size of countriesList after CountryDBReader().execute(): " + countriesList.size());
+
+                // testing
+//                Log.d("Quiz Fragment", "Size of countriesList after CountryDBReader().execute(): " + countriesList.size());
 
                 // generate the random countries
                 Random random = new Random();
                 Country randomCountry = countriesList.get(random.nextInt(countriesList.size()));
 
+                // get the correct question index
                 int j = ((QuizActivity) getActivity()).getPosition() + 1;
 
                 question.setText("Question " + j + ": Name the continent on which " + randomCountry.getCountry() + " is located.");
@@ -161,8 +171,10 @@ public class QuizFragment extends Fragment {
                     }
                 }
 
+                // testing
                 Log.d("Quiz Fragment", "Correct answer for " + randomCountry.getCountry() + ": " + randomCountry.getContinent());
 
+                // sets the texts for the answer choices
                 option1.setText(choices.get(0));
                 option2.setText(choices.get(1));
                 option3.setText(choices.get(2));
@@ -176,10 +188,12 @@ public class QuizFragment extends Fragment {
 
 //                        String correct_choice_string = choices.get(correct_choice);
 
+                        // testing
                         Log.d("CheckedRadioButton", checkedRadioButton.getText().toString());
 
                         if (checkedRadioButton != null && checkedRadioButton.getText().toString().equals(choices.get(correct_choice))) {
 
+                            // testing
                             Log.d("Quiz Fragment", "You picked the correct choice");
 
                             ((QuizActivity) getActivity()).updateTotalGrade();
@@ -189,7 +203,11 @@ public class QuizFragment extends Fragment {
                         }
                     }
                 });
-            } else {
+            }
+            // if the user is on the last page
+            else {
+
+                // displays the current date and the results of the current quiz
                 DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                 Date date = new Date();
                 dateString = dateFormat.format(date);
@@ -201,7 +219,10 @@ public class QuizFragment extends Fragment {
                 option2.setVisibility(View.INVISIBLE);
                 option3.setVisibility(View.INVISIBLE);
 
+
+                // no idea why this is here
                 resultsData = new ResultsData(getActivity());
+
 //            resultsData.open();
 //            Results results = new Results(dateFormat.format(date), total);
 //            new ResultsDBWriter().execute(results);
@@ -209,6 +230,7 @@ public class QuizFragment extends Fragment {
         }
     }
 
+    // for saving the results
     private class SaveButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick( View v ) {
