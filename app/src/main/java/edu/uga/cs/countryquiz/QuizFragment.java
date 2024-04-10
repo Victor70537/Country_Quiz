@@ -1,5 +1,6 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -235,6 +236,10 @@ public class QuizFragment extends Fragment {
         @Override
         public void onClick( View v ) {
             Results results = new Results(dateString, total);
+
+            Intent intent = new Intent( v.getContext(), MainActivity.class );
+            v.getContext().startActivity( intent );
+
 
             // Store this new job lead in the database asynchronously,
             // without blocking the UI thread.

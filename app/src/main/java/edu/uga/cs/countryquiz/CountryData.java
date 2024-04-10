@@ -30,14 +30,14 @@ public class CountryData {
     // Open the database
     public void open() {
         db = countryDBHelper.getWritableDatabase();
-        Log.d( DEBUG_TAG, "JobLeadsData: db open" );
+        Log.d( DEBUG_TAG, "CountryData: db open" );
     }
 
     // Close the database
     public void close() {
         if( countryDBHelper != null ) {
             countryDBHelper.close();
-            Log.d(DEBUG_TAG, "JobLeadsData: db closed");
+            Log.d(DEBUG_TAG, "CountryData: db closed");
         }
     }
 
@@ -64,14 +64,14 @@ public class CountryData {
 
             Log.d(DEBUG_TAG, ""+ cursor.getCount());
 
-            // collect all job leads into a List
+            // collect all countries into a List
             if( cursor != null && cursor.getCount() > 0 ) {
 
                 while( cursor.moveToNext() ) {
 
                     if( cursor.getColumnCount() >= 3) {
 
-                        // get all attribute values of this job lead
+                        // get all attribute values of this country
                         columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_ID );
                         int id = cursor.getInt( columnIndex );
                         columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_COUNTRY );
@@ -79,7 +79,7 @@ public class CountryData {
                         columnIndex = cursor.getColumnIndex( CountryDBHelper.COLUMN_CONTINENT );
                         String continent = cursor.getString( columnIndex );
 
-                        // create a new JobLead object and set its state to the retrieved values
+                        // create a new Country object and set its state to the retrieved values
                         Country country = new Country( country_string, continent );
                         country.setId(id); // set the id (the primary key) of this object
                         // add it to the list
