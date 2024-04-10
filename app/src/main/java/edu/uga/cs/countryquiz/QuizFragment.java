@@ -222,8 +222,8 @@ public class QuizFragment extends Fragment {
 
                 // no idea why this is here
                 resultsData = new ResultsData(getActivity());
+                resultsData.open();
 
-//            resultsData.open();
 //            Results results = new Results(dateFormat.format(date), total);
 //            new ResultsDBWriter().execute(results);
             }
