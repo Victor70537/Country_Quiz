@@ -74,6 +74,8 @@ public class QuizFragment extends Fragment {
         countryData = new CountryData( getActivity().getApplication() );
         countryData.open();
 
+        ((QuizActivity) getActivity()).resetSelectedCorrect();
+
     }
 
     @Override
@@ -124,6 +126,8 @@ public class QuizFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Country> countriesList) {
+
+            Log.d("Quiz Fragment", "Quiz Fragment Position: " + ((QuizActivity) getActivity()).getPosition());
 
             // this is to check if we should show the quiz or the results
             if (((QuizActivity) getActivity()).getPosition() < 6) {
@@ -187,8 +191,6 @@ public class QuizFragment extends Fragment {
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         RadioButton checkedRadioButton = getView().findViewById(checkedId);
 
-//                        String correct_choice_string = choices.get(correct_choice);
-
                         // testing
                         Log.d("CheckedRadioButton", checkedRadioButton.getText().toString());
 
@@ -197,10 +199,20 @@ public class QuizFragment extends Fragment {
                             // testing
                             Log.d("Quiz Fragment", "You picked the correct choice");
 
-                            ((QuizActivity) getActivity()).updateTotalGrade();
+                            if (((QuizActivity) getActivity()).getSelectedCorrect() == 0) {
+                                ((QuizActivity) getActivity()).updateSelectedCorrect();
+                                ((QuizActivity) getActivity()).updateTotalGrade();
+
+                                Log.d("Quiz Fragment", "Grade++");
+                            }
 
                         } else {
-                            // do nothing if its wrong
+                            if (((QuizActivity) getActivity()).getSelectedCorrect() != 0) {
+
+                                ((QuizActivity) getActivity()).resetSelectedCorrect();
+                                ((QuizActivity) getActivity()).decreaseTotalGrade();
+                                Log.d("Quiz Fragment", "Grade--");
+                            }
                         }
                     }
                 });

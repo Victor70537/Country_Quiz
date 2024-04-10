@@ -15,7 +15,7 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
 
-        Log.d("QuizPagerAdapter", "Position: " + position);
+        Log.d("QuizPagerAdapter", "Quiz Pager Adapter Position: " + position);
 
         return QuizFragment.newInstance(position);
     }
