@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private Button quizButton;
@@ -16,7 +17,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Need to set text for instructions.
+        TextView instructions = findViewById(R.id.instructions);
+        instructions.setText("Get ready to learn countries and continents!\n\nBelow are two buttons."
+                + "The first button takes you to a six question quiz of random countries. The second button takes"
+                + "takes you to a page with your past quiz results.\n\nGoodluck and safe travels!");
 
         quizButton = findViewById(R.id.button);
         quizButton.setOnClickListener(new View.OnClickListener() {
