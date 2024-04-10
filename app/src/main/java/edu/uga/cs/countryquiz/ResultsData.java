@@ -65,14 +65,14 @@ public class ResultsData {
 
             Log.d(DEBUG_TAG, ""+ cursor.getCount());
 
-            // collect all job leads into a List
+            // collect all results into a List
             if( cursor != null && cursor.getCount() > 0 ) {
 
                 while( cursor.moveToNext() ) {
 
                     if( cursor.getColumnCount() >= 2) {
 
-                        // get all attribute values of this job lead
+                        // get all attribute values of this result
                         columnIndex = cursor.getColumnIndex( ResultsDBHelper.COLUMN_ID );
                         int id = cursor.getInt( columnIndex );
                         columnIndex = cursor.getColumnIndex( ResultsDBHelper.COLUMN_DATE);
@@ -80,7 +80,7 @@ public class ResultsData {
                         columnIndex = cursor.getColumnIndex( ResultsDBHelper.COLUMN_GRADE);
                         int grade = cursor.getInt( columnIndex );
 
-                        // create a new JobLead object and set its state to the retrieved values
+                        // create a new Results object and set its state to the retrieved values
                         Results results = new Results( date, grade );
                         results.setId(id); // set the id (the primary key) of this object
                         // add it to the list
@@ -105,17 +105,17 @@ public class ResultsData {
                 cursor.close();
             }
         }
-        // return a list of retrieved job leads
+        // return a list of retrieved results
         return results_list;
     }
 
-    // Store a new job lead in the database.
+    // Store a new results in the database.
     public Results storeResult( Results result ) {
 
         // Prepare the values for all of the necessary columns in the table
-        // and set their values to the variables of the JobLead argument.
-        // This is how we are providing persistence to a JobLead (Java object) instance
-        // by storing it as a new row in the database table representing job leads.
+        // and set their values to the variables of the Results argument.
+        // This is how we are providing persistence to a Results (Java object) instance
+        // by storing it as a new row in the database table representing results.
         ContentValues values = new ContentValues();
 //        values.put( ResultsDBHelper.COLUMN_ID, result.getID());
         values.put( ResultsDBHelper.COLUMN_DATE, result.getDate() );
@@ -126,7 +126,7 @@ public class ResultsData {
         // and returned as from the insert method call.
         long id = db.insert( ResultsDBHelper.TABLE_RESULTS, null, values );
 
-        // store the id (the primary key) in the JobLead instance, as it is now persistent
+        // store the id (the primary key) in the Results instance, as it is now persistent
         result.setId( (int) id );
 
         Log.d( DEBUG_TAG, "Stored new job lead with id: " + String.valueOf( result.getID() ) );
