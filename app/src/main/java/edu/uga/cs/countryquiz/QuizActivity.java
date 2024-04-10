@@ -9,6 +9,8 @@ import android.util.Log;
 public class QuizActivity extends AppCompatActivity {
 
     private int totalGrade = 0;
+    private int selected_correct_choice = 0;
+
     ViewPager2 pager;
 
     @Override
@@ -28,8 +30,26 @@ public class QuizActivity extends AppCompatActivity {
         Log.d("Quiz Activity", "Total Grade: " + totalGrade);
     }
 
+    public void decreaseTotalGrade() {
+        totalGrade --;
+
+        Log.d("Quiz Activity", "Total Grade: " + totalGrade);
+    }
+
+    public void updateSelectedCorrect() {
+        selected_correct_choice ++;
+    }
+
+    public void resetSelectedCorrect() {
+        selected_correct_choice = 0;
+    }
+
     public int getTotalGrade() {
         return totalGrade;
+    }
+
+    public int getSelectedCorrect() {
+        return selected_correct_choice;
     }
 
     public int getPosition() {
