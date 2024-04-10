@@ -58,7 +58,15 @@ public class ResultsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Results> resultsList) {
 
-            displayResults.setText(resultsList.toString());
+            String resultsString = "";
+
+            for (int i = 0; i < resultsList.size(); i++) {
+
+                resultsString = resultsString + resultsList.get(i) + "\n";
+
+            }
+
+            displayResults.setText(resultsString);
 
             }
         }
